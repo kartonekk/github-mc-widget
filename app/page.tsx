@@ -3,38 +3,15 @@
 import { useMemo, useState } from "react";
 
 export default function Home() {
-  const [modrinth, setModrinth] = useState("headlocator");
-  const [curseforge, setCurseforge] = useState("head-locator");
-  const [category, setCategory] = useState("mc-mods");
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-  const [style, setStyle] = useState<"flat" | "flat-square" | "for-the-badge">("flat");
   const [copied, setCopied] = useState(false);
 
   const origin = typeof window !== "undefined" ? window.location.origin : "https://your-deployment.vercel.app";
+  const profileBadgeUrl = `${origin}/api/badge/profile`;
 
-  const params = (extra: Record<string, string>) => {
-    const p = new URLSearchParams({ theme, style, ...extra });
-    return p.toString();
-  };
-
-  const modrinthBadgeUrl = `${origin}/api/badge/modrinth?${params({ project: modrinth })}`;
-  const modrinthPageUrl = `https://modrinth.com/project/${modrinth}`;
-
-  const curseforgeBadgeUrl = `${origin}/api/badge/curseforge?${params({ slug: curseforge, category })}`;
-  const curseforgePageUrl = `https://www.curseforge.com/minecraft/${category}/${curseforge}`;
-
-  const markdown = useMemo(
-    () =>
-      `[![Modrinth Downloads](${modrinthBadgeUrl})](${modrinthPageUrl})\n` +
-      `[![CurseForge Downloads](${curseforgeBadgeUrl})](${curseforgePageUrl})`,
-    [modrinthBadgeUrl, modrinthPageUrl, curseforgeBadgeUrl, curseforgePageUrl]
-  );
-
+  const markdown = useMemo(() => `![Total Downloads](${profileBadgeUrl})`, [profileBadgeUrl]);
   const html = useMemo(
-    () =>
-      `<a href="${modrinthPageUrl}"><img src="${modrinthBadgeUrl}" alt="Modrinth Downloads"></a>\n` +
-      `<a href="${curseforgePageUrl}"><img src="${curseforgeBadgeUrl}" alt="CurseForge Downloads"></a>`,
-    [modrinthBadgeUrl, modrinthPageUrl, curseforgeBadgeUrl, curseforgePageUrl]
+    () => `<img src="${profileBadgeUrl}" alt="Total Downloads">`,
+    [profileBadgeUrl]
   );
 
   const copy = async (text: string) => {
@@ -47,79 +24,16 @@ export default function Home() {
     <main>
       <h1>github-mc-widget</h1>
       <p className="subtitle">
-        Download-count badges for Modrinth &amp; CurseForge. Each badge is its own image linking
-        straight to that platform&apos;s project page — drop both into your GitHub profile README.
+        A dashboard-style profile card — total downloads, best project, and account age, summed
+        across your Modrinth and CurseForge projects (config-driven, see
+        lib/projects.config.ts). Drop it into your GitHub profile README.
       </p>
 
       <div className="panel">
-        <div className="row">
-          <div>
-            <label htmlFor="modrinth">Modrinth project slug or ID</label>
-            <input id="modrinth" value={modrinth} onChange={(e) => setModrinth(e.target.value)} />
-          </div>
-          <div>
-            <label htmlFor="curseforge">CurseForge slug</label>
-            <input id="curseforge" value={curseforge} onChange={(e) => setCurseforge(e.target.value)} />
-          </div>
-        </div>
-        <div className="row">
-          <div>
-            <label htmlFor="category">CurseForge category</label>
-            <select id="category" value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option value="mc-mods">mc-mods</option>
-              <option value="modpacks">modpacks</option>
-              <option value="texture-packs">texture-packs</option>
-              <option value="shaders">shaders</option>
-              <option value="worlds">worlds</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="style">Style</label>
-            <select id="style" value={style} onChange={(e) => setStyle(e.target.value as typeof style)}>
-              <option value="flat">flat</option>
-              <option value="flat-square">flat-square</option>
-              <option value="for-the-badge">for-the-badge</option>
-            </select>
-          </div>
-        </div>
-        <div className="row">
-          <div>
-            <label htmlFor="theme">Theme</label>
-            <select id="theme" value={theme} onChange={(e) => setTheme(e.target.value as typeof theme)}>
-              <option value="dark">dark</option>
-              <option value="light">light</option>
-            </select>
-          </div>
-          <div />
-        </div>
-      </div>
-
-      <div className="panel">
-        <label>Preview — click a badge to open its project page</label>
+        <label>Preview</label>
         <div className="preview">
-          <a href={modrinthPageUrl} target="_blank" rel="noreferrer">
-            <img src={modrinthBadgeUrl} alt="Modrinth Downloads" />
-          </a>
-          <a href={curseforgePageUrl} target="_blank" rel="noreferrer">
-            <img src={curseforgeBadgeUrl} alt="CurseForge Downloads" />
-          </a>
+          <img src={profileBadgeUrl} alt="Total Downloads" />
         </div>
-      </div>
-
-      <div className="panel">
-        <label>Aggregate — total downloads across every project (lib/projects.config.ts)</label>
-        <div className="preview">
-          <img src={`${origin}/api/badge/author?${params({})}`} alt="Total Downloads" />
-        </div>
-        <pre>{`[![Total Downloads](${origin}/api/badge/author?${params({})})](${origin})`}</pre>
-      </div>
-
-      <div className="panel">
-        <label>Profile card — downloads, best project, account age (lib/projects.config.ts)</label>
-        <div className="preview">
-          <img src={`${origin}/api/badge/profile`} alt="Profile stats" />
-        </div>
-        <pre>{`![Profile stats](${origin}/api/badge/profile)`}</pre>
       </div>
 
       <div className="panel">
@@ -136,10 +50,7 @@ export default function Home() {
 
       <div className="panel">
         <label>API reference</label>
-        <pre>{`GET /api/badge/modrinth?project=<slug-or-id>[&theme=&style=&color=&label=&logo=false]
-GET /api/badge/curseforge?slug=<slug>[&category=mc-mods][&id=<numeric-id>][&theme=&style=&color=&label=&logo=false]
-GET /api/badge/combined?modrinth=<slug>&curseforge=<slug>[&category=][&theme=&style=&color=&label=]
-GET /api/badge/author[?theme=&style=&color=&label=]  (config-driven, see lib/projects.config.ts)`}</pre>
+        <pre>{`GET /api/badge/profile  (config-driven, see lib/projects.config.ts — no query params)`}</pre>
       </div>
     </main>
   );

@@ -1,7 +1,7 @@
-export type BadgeStyle = "flat" | "flat-square" | "for-the-badge" | "card";
-export type BadgeTheme = "light" | "dark";
+type BadgeStyle = "flat" | "flat-square" | "for-the-badge" | "card";
+type BadgeTheme = "light" | "dark";
 
-export interface BadgeOptions {
+interface BadgeOptions {
   label: string;
   value: string;
   color: string; // hex, e.g. "#1bd96a"
@@ -42,7 +42,7 @@ export function errorBadge(message: string, style?: BadgeStyle, theme?: BadgeThe
   return renderBadge({ label: "error", value: message, color: "#e05d44", style, theme });
 }
 
-export function renderBadge(opts: BadgeOptions): string {
+function renderBadge(opts: BadgeOptions): string {
   const style = opts.style ?? "flat";
   const theme = opts.theme ?? "light";
   const forTheBadge = style === "for-the-badge";
