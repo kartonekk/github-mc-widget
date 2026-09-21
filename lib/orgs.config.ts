@@ -9,7 +9,7 @@ export interface OrgConfigEntry {
 
 export const ORGS_CONFIG = {
   orgs: [
-    { login: "Karton-Modding", subtitle: "My minecraft mods" },
+    { login: "Kart-Modding", subtitle: "My minecraft mods" },
     { login: "Kart-Forks", subtitle: "My forks" },
   ] as [OrgConfigEntry, OrgConfigEntry],
 };

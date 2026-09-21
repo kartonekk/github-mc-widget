@@ -44,13 +44,16 @@ export default function Home() {
 
       {ORGS_CONFIG.orgs.map(({ login }) => {
         const badgeUrl = `${origin}/api/badge/org?login=${encodeURIComponent(login)}`;
-        const markdown = `![${login}](${badgeUrl})`;
-        const html = `<img src="${badgeUrl}" alt="${login}">`;
+        const orgPageUrl = `https://github.com/${login}`;
+        const markdown = `[![${login}](${badgeUrl})](${orgPageUrl})`;
+        const html = `<a href="${orgPageUrl}"><img src="${badgeUrl}" alt="${login}"></a>`;
         return (
           <div className="panel" key={login}>
             <label>Organization card — {login}</label>
             <div className="preview">
-              <img src={badgeUrl} alt={login} />
+              <a href={orgPageUrl} target="_blank" rel="noreferrer">
+                <img src={badgeUrl} alt={login} />
+              </a>
             </div>
             <pre>{markdown}</pre>
             <button onClick={() => copy(`${login}-md`, markdown)}>

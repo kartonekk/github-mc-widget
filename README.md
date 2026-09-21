@@ -8,8 +8,8 @@ Dynamically generated SVG cards for a GitHub profile README:
 
 ```md
 ![Total Downloads](https://your-deployment.vercel.app/api/badge/profile)
-![Karton-Modding](https://your-deployment.vercel.app/api/badge/org?login=Karton-Modding)
-![Kart-Forks](https://your-deployment.vercel.app/api/badge/org?login=Kart-Forks)
+[![Kart-Modding](https://your-deployment.vercel.app/api/badge/org?login=Kart-Modding)](https://github.com/Kart-Modding)
+[![Kart-Forks](https://your-deployment.vercel.app/api/badge/org?login=Kart-Forks)](https://github.com/Kart-Forks)
 ```
 
 Visit the deployed site's homepage for a live preview and copy/paste-ready
@@ -43,10 +43,12 @@ driven by `lib/projects.config.ts`.
 
 ### `GET /api/badge/org?login=<org>`
 
-Compact card (280×100, dark gradient) with one GitHub organization's public
-repo count. `login` is required and can be any public org — fetched live
-from the public GitHub API (`GET /orgs/{login}`), no token needed. Add one
-`<img>`/markdown line per org you want to show.
+Card (420×120, dark gradient) with one GitHub organization's public repo
+count. `login` is required and can be any public org — fetched live from
+the public GitHub API (`GET /orgs/{login}`), no token needed. A matching
+entry in `lib/orgs.config.ts` adds a subtitle under the org name. Add one
+`<img>`/markdown line per org you want to show, wrapped in a link to
+`https://github.com/<org>` so clicking it opens the organization.
 
 All badge responses are SVG (`image/svg+xml`) and are CDN-cached for one
 hour (`s-maxage=3600`) so a busy GitHub profile doesn't hammer the upstream
