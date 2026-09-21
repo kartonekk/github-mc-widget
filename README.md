@@ -4,11 +4,12 @@ Dynamically generated SVG cards for a GitHub profile README:
 
 - a profile card summarizing your Modrinth + CurseForge project stats —
   total downloads, best-selling project, and account age
-- an organizations card showing public repo counts for two GitHub orgs
+- an organization card (one per org) showing its public repo count
 
 ```md
 ![Total Downloads](https://your-deployment.vercel.app/api/badge/profile)
-![Organizations](https://your-deployment.vercel.app/api/badge/orgs)
+![Karton-Modding](https://your-deployment.vercel.app/api/badge/org?login=Karton-Modding)
+![Kart-Forks](https://your-deployment.vercel.app/api/badge/org?login=Kart-Forks)
 ```
 
 Visit the deployed site's homepage for a live preview and copy/paste-ready
@@ -40,12 +41,12 @@ center, plus a 3-row breakdown — best-selling project, project count, and
 account age since your Modrinth signup date. No query params; entirely
 driven by `lib/projects.config.ts`.
 
-### `GET /api/badge/orgs`
+### `GET /api/badge/org?login=<org>`
 
-Two-column card (420×200, dark gradient): public repo count for each of the
-two GitHub organizations configured in `lib/orgs.config.ts`. No query
-params; fetched live from the public GitHub API (`GET /orgs/{login}`), no
-token needed.
+Compact card (280×100, dark gradient) with one GitHub organization's public
+repo count. `login` is required and can be any public org — fetched live
+from the public GitHub API (`GET /orgs/{login}`), no token needed. Add one
+`<img>`/markdown line per org you want to show.
 
 All badge responses are SVG (`image/svg+xml`) and are CDN-cached for one
 hour (`s-maxage=3600`) so a busy GitHub profile doesn't hammer the upstream

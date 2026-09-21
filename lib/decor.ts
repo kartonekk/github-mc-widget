@@ -33,31 +33,34 @@ interface CornerSquare {
   opacity: number;
 }
 
-// Top-right square lives around (w, 0), bottom-left around (0, h) — the
-// randomization only jitters position/size/rotation within each corner, it
-// never relocates a square to a different part of the card.
+// Top-right square lives around (w, 0), bottom-left around (0, h). Every
+// offset is a fraction of the card's own width/the square's own size rather
+// than a fixed pixel count, so the squares stay anchored in their corner
+// (instead of drifting toward the middle) regardless of the card's height —
+// a 100px-tall card and a 240px-tall card both get correctly corner-hugging
+// squares.
 export function cornerSquares(seed: string, w: number, h: number): [CornerSquare, CornerSquare] {
   const rand = mulberry32(hashSeed(seed));
   const pick = (min: number, max: number) => min + rand() * (max - min);
 
-  const trSize = pick(50, 80);
+  const trSize = pick(0.12, 0.19) * w;
   const topRight: CornerSquare = {
     size: trSize,
-    radius: pick(14, 20),
+    radius: trSize * pick(0.24, 0.32),
     rotation: pick(0, 36),
     opacity: pick(0.035, 0.065),
-    x: w - pick(60, 110),
-    y: pick(-30, 10) - trSize * 0.3,
+    x: w - trSize * pick(0.4, 0.75),
+    y: -trSize * pick(0.3, 0.6),
   };
 
-  const blSize = pick(40, 66);
+  const blSize = pick(0.09, 0.14) * w;
   const bottomLeft: CornerSquare = {
     size: blSize,
-    radius: pick(10, 18),
+    radius: blSize * pick(0.22, 0.3),
     rotation: pick(0, 36),
     opacity: pick(0.03, 0.055),
-    x: pick(-30, 10) - blSize * 0.2,
-    y: h - pick(60, 100),
+    x: -blSize * pick(0.3, 0.6),
+    y: h - blSize * pick(0.4, 0.75),
   };
 
   return [topRight, bottomLeft];

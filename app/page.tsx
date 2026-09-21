@@ -1,19 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ORGS_CONFIG } from "@/lib/orgs.config";
 
 export default function Home() {
   const [copied, setCopied] = useState<string | null>(null);
 
   const origin = typeof window !== "undefined" ? window.location.origin : "https://your-deployment.vercel.app";
   const profileBadgeUrl = `${origin}/api/badge/profile`;
-  const orgsBadgeUrl = `${origin}/api/badge/orgs`;
 
   const profileMarkdown = useMemo(() => `![Total Downloads](${profileBadgeUrl})`, [profileBadgeUrl]);
   const profileHtml = useMemo(() => `<img src="${profileBadgeUrl}" alt="Total Downloads">`, [profileBadgeUrl]);
-
-  const orgsMarkdown = useMemo(() => `![Organizations](${orgsBadgeUrl})`, [orgsBadgeUrl]);
-  const orgsHtml = useMemo(() => `<img src="${orgsBadgeUrl}" alt="Organizations">`, [orgsBadgeUrl]);
 
   const copy = async (key: string, text: string) => {
     await navigator.clipboard.writeText(text);
@@ -26,9 +23,8 @@ export default function Home() {
       <h1>github-mc-widget</h1>
       <p className="subtitle">
         Dashboard-style SVG cards for a GitHub profile README — total downloads/best
-        project/account age summed across your Modrinth and CurseForge projects, and public repo
-        counts for your organizations. Both are config-driven (lib/projects.config.ts,
-        lib/orgs.config.ts) — no query params needed.
+        project/account age summed across your Modrinth and CurseForge projects, and a public
+        repo-count card per GitHub organization. Drop each one in separately.
       </p>
 
       <div className="panel">
@@ -46,25 +42,32 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="panel">
-        <label>Organizations card — public repo count per org</label>
-        <div className="preview">
-          <img src={orgsBadgeUrl} alt="Organizations" />
-        </div>
-        <pre>{orgsMarkdown}</pre>
-        <button onClick={() => copy("orgs-md", orgsMarkdown)}>
-          {copied === "orgs-md" ? "Copied!" : "Copy Markdown"}
-        </button>
-        <pre>{orgsHtml}</pre>
-        <button onClick={() => copy("orgs-html", orgsHtml)}>
-          {copied === "orgs-html" ? "Copied!" : "Copy HTML"}
-        </button>
-      </div>
+      {ORGS_CONFIG.orgs.map((login) => {
+        const badgeUrl = `${origin}/api/badge/org?login=${encodeURIComponent(login)}`;
+        const markdown = `![${login}](${badgeUrl})`;
+        const html = `<img src="${badgeUrl}" alt="${login}">`;
+        return (
+          <div className="panel" key={login}>
+            <label>Organization card — {login}</label>
+            <div className="preview">
+              <img src={badgeUrl} alt={login} />
+            </div>
+            <pre>{markdown}</pre>
+            <button onClick={() => copy(`${login}-md`, markdown)}>
+              {copied === `${login}-md` ? "Copied!" : "Copy Markdown"}
+            </button>
+            <pre>{html}</pre>
+            <button onClick={() => copy(`${login}-html`, html)}>
+              {copied === `${login}-html` ? "Copied!" : "Copy HTML"}
+            </button>
+          </div>
+        );
+      })}
 
       <div className="panel">
         <label>API reference</label>
-        <pre>{`GET /api/badge/profile  (config-driven, see lib/projects.config.ts — no query params)
-GET /api/badge/orgs     (config-driven, see lib/orgs.config.ts — no query params)`}</pre>
+        <pre>{`GET /api/badge/profile         (config-driven, see lib/projects.config.ts — no query params)
+GET /api/badge/org?login=<org> (any public GitHub org login)`}</pre>
       </div>
     </main>
   );
