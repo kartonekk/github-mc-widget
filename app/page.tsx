@@ -3,54 +3,68 @@
 import { useMemo, useState } from "react";
 
 export default function Home() {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
 
   const origin = typeof window !== "undefined" ? window.location.origin : "https://your-deployment.vercel.app";
   const profileBadgeUrl = `${origin}/api/badge/profile`;
+  const orgsBadgeUrl = `${origin}/api/badge/orgs`;
 
-  const markdown = useMemo(() => `![Total Downloads](${profileBadgeUrl})`, [profileBadgeUrl]);
-  const html = useMemo(
-    () => `<img src="${profileBadgeUrl}" alt="Total Downloads">`,
-    [profileBadgeUrl]
-  );
+  const profileMarkdown = useMemo(() => `![Total Downloads](${profileBadgeUrl})`, [profileBadgeUrl]);
+  const profileHtml = useMemo(() => `<img src="${profileBadgeUrl}" alt="Total Downloads">`, [profileBadgeUrl]);
 
-  const copy = async (text: string) => {
+  const orgsMarkdown = useMemo(() => `![Organizations](${orgsBadgeUrl})`, [orgsBadgeUrl]);
+  const orgsHtml = useMemo(() => `<img src="${orgsBadgeUrl}" alt="Organizations">`, [orgsBadgeUrl]);
+
+  const copy = async (key: string, text: string) => {
     await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    setCopied(key);
+    setTimeout(() => setCopied(null), 1500);
   };
 
   return (
     <main>
       <h1>github-mc-widget</h1>
       <p className="subtitle">
-        A dashboard-style profile card — total downloads, best project, and account age, summed
-        across your Modrinth and CurseForge projects (config-driven, see
-        lib/projects.config.ts). Drop it into your GitHub profile README.
+        Dashboard-style SVG cards for a GitHub profile README — total downloads/best
+        project/account age summed across your Modrinth and CurseForge projects, and public repo
+        counts for your organizations. Both are config-driven (lib/projects.config.ts,
+        lib/orgs.config.ts) — no query params needed.
       </p>
 
       <div className="panel">
-        <label>Preview</label>
+        <label>Profile card — downloads, best project, account age</label>
         <div className="preview">
           <img src={profileBadgeUrl} alt="Total Downloads" />
         </div>
+        <pre>{profileMarkdown}</pre>
+        <button onClick={() => copy("profile-md", profileMarkdown)}>
+          {copied === "profile-md" ? "Copied!" : "Copy Markdown"}
+        </button>
+        <pre>{profileHtml}</pre>
+        <button onClick={() => copy("profile-html", profileHtml)}>
+          {copied === "profile-html" ? "Copied!" : "Copy HTML"}
+        </button>
       </div>
 
       <div className="panel">
-        <label>Markdown (GitHub README)</label>
-        <pre>{markdown}</pre>
-        <button onClick={() => copy(markdown)}>{copied ? "Copied!" : "Copy Markdown"}</button>
-      </div>
-
-      <div className="panel">
-        <label>HTML</label>
-        <pre>{html}</pre>
-        <button onClick={() => copy(html)}>{copied ? "Copied!" : "Copy HTML"}</button>
+        <label>Organizations card — public repo count per org</label>
+        <div className="preview">
+          <img src={orgsBadgeUrl} alt="Organizations" />
+        </div>
+        <pre>{orgsMarkdown}</pre>
+        <button onClick={() => copy("orgs-md", orgsMarkdown)}>
+          {copied === "orgs-md" ? "Copied!" : "Copy Markdown"}
+        </button>
+        <pre>{orgsHtml}</pre>
+        <button onClick={() => copy("orgs-html", orgsHtml)}>
+          {copied === "orgs-html" ? "Copied!" : "Copy HTML"}
+        </button>
       </div>
 
       <div className="panel">
         <label>API reference</label>
-        <pre>{`GET /api/badge/profile  (config-driven, see lib/projects.config.ts — no query params)`}</pre>
+        <pre>{`GET /api/badge/profile  (config-driven, see lib/projects.config.ts — no query params)
+GET /api/badge/orgs     (config-driven, see lib/orgs.config.ts — no query params)`}</pre>
       </div>
     </main>
   );

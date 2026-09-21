@@ -1,4 +1,5 @@
 import { esc, formatCard } from "./card";
+import { cornerSquares, renderCornerSquares } from "./decor";
 
 export interface ProfileRow {
   title: string;
@@ -13,6 +14,7 @@ export interface ProfileCardOptions {
   rows: [ProfileRow, ProfileRow, ProfileRow];
   modrinthIconPath: string;
   curseforgeIconPath: string;
+  seed: string;
 }
 
 const W = 420;
@@ -53,6 +55,8 @@ export function renderProfileCard(opts: ProfileCardOptions): string {
     })
     .join("\n");
 
+  const decor = renderCornerSquares(cornerSquares(opts.seed, W, H), "#c5ff4a");
+
   const iconChip = (x: number, path: string) =>
     `<circle cx="${x}" cy="${H - PAD - 10}" r="14" fill="#ffffff" fill-opacity="0.14"/>
 <svg x="${x - 8}" y="${H - PAD - 18}" width="16" height="16" viewBox="0 0 24 24"><path fill="#ffffff" fill-opacity="0.9" d="${path}"/></svg>`;
@@ -68,8 +72,7 @@ export function renderProfileCard(opts: ProfileCardOptions): string {
 </defs>
 <g clip-path="url(#pcard-clip)">
 <rect width="${W}" height="${H}" fill="url(#pbg)"/>
-<rect x="330" y="-20" width="70" height="70" rx="18" fill="#c5ff4a" fill-opacity="0.05" transform="rotate(18 365 15)"/>
-<rect x="-16" y="150" width="56" height="56" rx="16" fill="#c5ff4a" fill-opacity="0.04" transform="rotate(18 12 178)"/>
+${decor}
 <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="27.5" fill="none" stroke="#3d444d"/>
 </g>
 <line x1="188" y1="${PAD}" x2="188" y2="${H - PAD}" stroke="#3d444d"/>

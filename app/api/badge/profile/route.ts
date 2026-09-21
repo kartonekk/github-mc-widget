@@ -3,6 +3,7 @@ import { renderProfileCard } from "@/lib/profile-card";
 import { errorBadge } from "@/lib/svg";
 import { MODRINTH_ICON_PATH, CURSEFORGE_ICON_PATH } from "@/lib/icons";
 import { formatCard } from "@/lib/card";
+import { AUTHOR_CONFIG } from "@/lib/projects.config";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,7 @@ export async function GET() {
       totalDownloads: stats.totalDownloads,
       modrinthIconPath: MODRINTH_ICON_PATH,
       curseforgeIconPath: CURSEFORGE_ICON_PATH,
+      seed: AUTHOR_CONFIG.modrinthUser,
       rows: [
         {
           title: stats.bestProject.title,

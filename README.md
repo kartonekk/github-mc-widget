@@ -1,15 +1,18 @@
 # github-mc-widget
 
-A dynamically generated SVG profile card summarizing your Modrinth +
-CurseForge project stats — total downloads, best-selling project, and
-account age — meant to be dropped into a GitHub profile README.
+Dynamically generated SVG cards for a GitHub profile README:
+
+- a profile card summarizing your Modrinth + CurseForge project stats —
+  total downloads, best-selling project, and account age
+- an organizations card showing public repo counts for two GitHub orgs
 
 ```md
 ![Total Downloads](https://your-deployment.vercel.app/api/badge/profile)
+![Organizations](https://your-deployment.vercel.app/api/badge/orgs)
 ```
 
 Visit the deployed site's homepage for a live preview and copy/paste-ready
-snippet.
+snippets.
 
 ## Deploy
 
@@ -36,6 +39,13 @@ Dashboard-style card (420×240, dark gradient): total downloads front and
 center, plus a 3-row breakdown — best-selling project, project count, and
 account age since your Modrinth signup date. No query params; entirely
 driven by `lib/projects.config.ts`.
+
+### `GET /api/badge/orgs`
+
+Two-column card (420×200, dark gradient): public repo count for each of the
+two GitHub organizations configured in `lib/orgs.config.ts`. No query
+params; fetched live from the public GitHub API (`GET /orgs/{login}`), no
+token needed.
 
 All badge responses are SVG (`image/svg+xml`) and are CDN-cached for one
 hour (`s-maxage=3600`) so a busy GitHub profile doesn't hammer the upstream
