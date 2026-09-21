@@ -5,6 +5,7 @@ import { GITHUB_ICON_PATH } from "./icons";
 export interface OrgCardOptions {
   login: string;
   repoCount: number;
+  subtitle?: string;
 }
 
 const W = 280;
@@ -27,6 +28,11 @@ export function renderOrgCard(opts: OrgCardOptions): string {
   const decor = renderCornerSquares(cornerSquares(opts.login, W, H), "#c5ff4a");
   const midY = H / 2;
 
+  const nameY = opts.subtitle ? midY - 8 : midY;
+  const subtitleSvg = opts.subtitle
+    ? `<text x="${PAD + 42}" y="${midY + 9}" dominant-baseline="central" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10" fill="#7d8590">${esc(truncate(opts.subtitle, 24))}</text>`
+    : "";
+
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opts.login)}: ${value} repositories">
 <title>${esc(opts.login)}: ${value} repositories</title>
 <defs>
@@ -43,8 +49,9 @@ ${decor}
 </g>
 <circle cx="${PAD + 16}" cy="${midY}" r="16" fill="#ffffff" fill-opacity="0.08"/>
 <svg x="${PAD + 7}" y="${midY - 9}" width="18" height="18" viewBox="0 0 24 24"><path fill="#c9d1d9" d="${GITHUB_ICON_PATH}"/></svg>
-<text x="${PAD + 42}" y="${midY + 5}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="15" font-weight="700" fill="#c9d1d9">${esc(truncate(opts.login, 20))}</text>
-<text x="${W - PAD}" y="${midY - 2}" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="${numberFontSize}" font-weight="800" fill="#c5ff4a">${esc(value)}</text>
-<text x="${W - PAD}" y="${midY + 16}" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10" fill="#7d8590">${value === "1" ? "repository" : "repositories"}</text>
+<text x="${PAD + 42}" y="${nameY}" dominant-baseline="central" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="15" font-weight="700" fill="#c9d1d9">${esc(truncate(opts.login, 20))}</text>
+${subtitleSvg}
+<text x="${W - PAD}" y="${midY - 9}" dominant-baseline="central" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="${numberFontSize}" font-weight="800" fill="#c5ff4a">${esc(value)}</text>
+<text x="${W - PAD}" y="${midY + 9}" dominant-baseline="central" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10" fill="#7d8590">${value === "1" ? "repository" : "repositories"}</text>
 </svg>`;
 }

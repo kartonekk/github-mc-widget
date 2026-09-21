@@ -49,8 +49,8 @@ export function cornerSquares(seed: string, w: number, h: number): [CornerSquare
     radius: trSize * pick(0.24, 0.32),
     rotation: pick(0, 36),
     opacity: pick(0.035, 0.065),
-    x: w - trSize * pick(0.4, 0.75),
-    y: -trSize * pick(0.3, 0.6),
+    x: w - trSize * pick(0.7, 0.95),
+    y: -trSize * pick(0.1, 0.3),
   };
 
   const blSize = pick(0.09, 0.14) * w;
@@ -59,8 +59,8 @@ export function cornerSquares(seed: string, w: number, h: number): [CornerSquare
     radius: blSize * pick(0.22, 0.3),
     rotation: pick(0, 36),
     opacity: pick(0.03, 0.055),
-    x: -blSize * pick(0.3, 0.6),
-    y: h - blSize * pick(0.4, 0.75),
+    x: -blSize * pick(0.05, 0.25),
+    y: h - blSize * pick(0.55, 0.85),
   };
 
   return [topRight, bottomLeft];

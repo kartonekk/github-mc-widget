@@ -42,7 +42,7 @@ export default function Home() {
         </button>
       </div>
 
-      {ORGS_CONFIG.orgs.map((login) => {
+      {ORGS_CONFIG.orgs.map(({ login }) => {
         const badgeUrl = `${origin}/api/badge/org?login=${encodeURIComponent(login)}`;
         const markdown = `![${login}](${badgeUrl})`;
         const html = `<img src="${badgeUrl}" alt="${login}">`;

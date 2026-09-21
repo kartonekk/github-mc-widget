@@ -1,6 +1,7 @@
 import { getOrgPublicRepoCount } from "@/lib/orgs";
 import { renderOrgCard } from "@/lib/org-card";
 import { errorBadge } from "@/lib/svg";
+import { ORGS_CONFIG } from "@/lib/orgs.config";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,8 @@ export async function GET(req: Request) {
 
   try {
     const org = await getOrgPublicRepoCount(login);
-    return svgResponse(renderOrgCard({ login: org.login, repoCount: org.publicRepos }), 3600);
+    const subtitle = ORGS_CONFIG.orgs.find((o) => o.login.toLowerCase() === org.login.toLowerCase())?.subtitle;
+    return svgResponse(renderOrgCard({ login: org.login, repoCount: org.publicRepos, subtitle }), 3600);
   } catch {
     return svgResponse(errorBadge("unavailable"), 60);
   }
