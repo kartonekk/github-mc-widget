@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 
 export default function Home() {
-  const [modrinth, setModrinth] = useState("sodium");
-  const [curseforge, setCurseforge] = useState("sodium");
+  const [modrinth, setModrinth] = useState("headlocator");
+  const [curseforge, setCurseforge] = useState("head-locator");
   const [category, setCategory] = useState("mc-mods");
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [style, setStyle] = useState<"flat" | "flat-square" | "for-the-badge">("flat");
@@ -107,6 +107,22 @@ export default function Home() {
       </div>
 
       <div className="panel">
+        <label>Aggregate — total downloads across every project (lib/projects.config.ts)</label>
+        <div className="preview">
+          <img src={`${origin}/api/badge/author?${params({})}`} alt="Total Downloads" />
+        </div>
+        <pre>{`[![Total Downloads](${origin}/api/badge/author?${params({})})](${origin})`}</pre>
+      </div>
+
+      <div className="panel">
+        <label>Profile card — downloads, best project, account age (lib/projects.config.ts)</label>
+        <div className="preview">
+          <img src={`${origin}/api/badge/profile`} alt="Profile stats" />
+        </div>
+        <pre>{`![Profile stats](${origin}/api/badge/profile)`}</pre>
+      </div>
+
+      <div className="panel">
         <label>Markdown (GitHub README)</label>
         <pre>{markdown}</pre>
         <button onClick={() => copy(markdown)}>{copied ? "Copied!" : "Copy Markdown"}</button>
@@ -122,7 +138,8 @@ export default function Home() {
         <label>API reference</label>
         <pre>{`GET /api/badge/modrinth?project=<slug-or-id>[&theme=&style=&color=&label=&logo=false]
 GET /api/badge/curseforge?slug=<slug>[&category=mc-mods][&id=<numeric-id>][&theme=&style=&color=&label=&logo=false]
-GET /api/badge/combined?modrinth=<slug>&curseforge=<slug>[&category=][&theme=&style=&color=&label=]`}</pre>
+GET /api/badge/combined?modrinth=<slug>&curseforge=<slug>[&category=][&theme=&style=&color=&label=]
+GET /api/badge/author[?theme=&style=&color=&label=]  (config-driven, see lib/projects.config.ts)`}</pre>
       </div>
     </main>
   );

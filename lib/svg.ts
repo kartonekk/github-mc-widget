@@ -1,4 +1,4 @@
-export type BadgeStyle = "flat" | "flat-square" | "for-the-badge";
+export type BadgeStyle = "flat" | "flat-square" | "for-the-badge" | "card";
 export type BadgeTheme = "light" | "dark";
 
 export interface BadgeOptions {

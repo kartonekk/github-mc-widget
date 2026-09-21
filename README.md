@@ -23,7 +23,11 @@ snippet for you (slug, theme, style, category — copy/paste ready).
 2. Import it into [Vercel](https://vercel.com/new) — zero config needed.
 3. (Optional) set `CURSEFORGE_API_KEY` in the Vercel project's environment
    variables if you want exact, real-time CurseForge numbers instead of the
-   free `cfwidget.com` proxy (see below).
+   free `cfwidget.com` proxy (see below) for projects *not* listed in
+   `data/curseforge-projects.json`.
+4. GitHub Actions (already set up, see below) needs no extra config — it
+   just needs `contents: write` on the default `GITHUB_TOKEN`, which is
+   already granted in the workflow file.
 
 ## Local dev
 
@@ -44,7 +48,7 @@ Open http://localhost:3000 for the badge generator UI.
 | `label`   | no       | left-side text, default `Modrinth`             |
 | `color`   | no       | hex color (no `#`) for the value section       |
 | `theme`   | no       | `light` \| `dark` (default `light`)            |
-| `style`   | no       | `flat` \| `flat-square` \| `for-the-badge`     |
+| `style`   | no       | `flat` \| `flat-square` \| `for-the-badge` \| `card` (260×260 gradient square) |
 | `logo`    | no       | `false` to hide the Modrinth icon              |
 
 ### `GET /api/badge/curseforge`
@@ -76,17 +80,45 @@ All badge responses are SVG (`image/svg+xml`) and are CDN-cached for one
 hour (`s-maxage=3600`) so a busy GitHub profile doesn't hammer the upstream
 APIs.
 
+### `GET /api/badge/author`
+
+Aggregate badge: total downloads summed across *every* project configured
+in `lib/projects.config.ts` — your whole Modrinth account plus every
+CurseForge project in `data/curseforge-projects.json`. No query params
+required; same `label`/`color`/`theme`/`style` options as the others.
+
+### `GET /api/badge/profile`
+
+Dashboard-style card (420×240, dark gradient): total downloads front and
+center, plus a 3-row breakdown — best-selling project, project count, and
+account age since your Modrinth signup date. No query params; entirely
+driven by `lib/projects.config.ts`.
+
 ## Data sources
 
 - **Modrinth**: the public [Modrinth API](https://docs.modrinth.com/) — no
-  key needed.
-- **CurseForge**: by default, the free
-  [`cfwidget.com`](https://cfwidget.com) proxy (no key needed, but can lag
-  up to ~15 minutes and a project's very first lookup may show "warming
-  up…" for a few seconds while it's indexed). For exact, real-time counts,
-  get a free key from the
-  [CurseForge Console](https://console.curseforge.com/), set it as
-  `CURSEFORGE_API_KEY`, and pass the project's numeric `id` instead of
-  `slug`.
+  key needed. `/api/badge/author` sums every project returned by
+  `GET /v2/user/{username}/projects`.
+- **CurseForge**: curseforge.com blocks plain HTTP requests (Cloudflare
+  returns a `403` to `curl`/`fetch`), so this repo scrapes it with a real
+  headless browser instead:
+  - `scripts/scrape-curseforge.mjs` (Playwright) visits each project listed
+    in `data/curseforge-projects.json` and reads the "Downloads" stat
+    straight off the page, writing the result to
+    `data/curseforge-downloads.json`.
+  - `.github/workflows/scrape-curseforge.yml` runs that script every 6
+    hours (and on manual dispatch) and commits the updated JSON back to
+    the repo — Vercel then auto-redeploys with fresh numbers baked in, no
+    scraping happens on the request path.
+  - `/api/badge/curseforge` uses this scraped data for any project listed
+    in `data/curseforge-projects.json`; for anything else it falls back to
+    the free [`cfwidget.com`](https://cfwidget.com) proxy (no key needed,
+    but can lag up to ~15 minutes, and a project's very first lookup may
+    show "warming up…" while it gets indexed), or the official API if
+    `CURSEFORGE_API_KEY` + a numeric `id` are given.
+  - To track your own projects: edit `data/curseforge-projects.json`
+    (`{ "slug": "...", "category": "mc-mods" }` per project — category is
+    the URL segment, e.g. `mc-mods`, `texture-packs`, `modpacks`), then run
+    `npm run scrape:curseforge` locally or trigger the workflow.
 
 Brand marks are sourced from [Simple Icons](https://simpleicons.org) (CC0).

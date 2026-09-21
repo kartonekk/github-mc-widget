@@ -1,8 +1,10 @@
 import { NextRequest } from "next/server";
 import { getCurseForgeDownloads } from "@/lib/curseforge";
+import { getKnownCurseForgeProject } from "@/lib/curseforge-data";
 import { renderBadge, errorBadge, BadgeStyle, BadgeTheme } from "@/lib/svg";
+import { renderCard } from "@/lib/card";
 import { formatCount } from "@/lib/format";
-import { CURSEFORGE_ICON_PATH, CURSEFORGE_COLOR } from "@/lib/icons";
+import { CURSEFORGE_ICON_PATH, CURSEFORGE_COLOR, CURSEFORGE_GRADIENT } from "@/lib/icons";
 import { NotFoundError, PendingError } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -33,15 +35,30 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const downloads = await getCurseForgeDownloads({ id, slug, category });
-    const svg = renderBadge({
-      label,
-      value: `${formatCount(downloads)} downloads`,
-      color: color ? `#${color.replace(/^#/, "")}` : CURSEFORGE_COLOR,
-      style,
-      theme,
-      iconPath: noLogo ? undefined : CURSEFORGE_ICON_PATH,
-    });
+    // Prefer our own pre-scraped data (see scripts/scrape-curseforge.mjs) —
+    // it's accurate and doesn't depend on cfwidget having indexed the
+    // project. Falls back to cfwidget/official API for anything not in
+    // data/curseforge-projects.json.
+    const known = slug ? getKnownCurseForgeProject(slug, category) : null;
+    const downloads = known ? known.downloads : await getCurseForgeDownloads({ id, slug, category });
+    const svg =
+      style === "card"
+        ? renderCard({
+            label,
+            count: downloads,
+            colorFrom: CURSEFORGE_GRADIENT.from,
+            colorTo: CURSEFORGE_GRADIENT.to,
+            iconPath: noLogo ? undefined : CURSEFORGE_ICON_PATH,
+            iconColor: CURSEFORGE_GRADIENT.to,
+          })
+        : renderBadge({
+            label,
+            value: `${formatCount(downloads)} downloads`,
+            color: color ? `#${color.replace(/^#/, "")}` : CURSEFORGE_COLOR,
+            style,
+            theme,
+            iconPath: noLogo ? undefined : CURSEFORGE_ICON_PATH,
+          });
     return svgResponse(svg, 3600);
   } catch (err) {
     if (err instanceof PendingError) {

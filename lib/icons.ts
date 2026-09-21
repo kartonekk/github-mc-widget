@@ -9,3 +9,6 @@ export const CURSEFORGE_ICON_PATH =
 
 export const MODRINTH_COLOR = "#1bd96a";
 export const CURSEFORGE_COLOR = "#f16436";
+
+export const MODRINTH_GRADIENT = { from: "#22e070", to: "#0b7a41" };
+export const CURSEFORGE_GRADIENT = { from: "#ff8a50", to: "#c93f1e" };

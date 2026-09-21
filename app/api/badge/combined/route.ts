@@ -1,7 +1,9 @@
 import { NextRequest } from "next/server";
 import { getModrinthDownloads } from "@/lib/modrinth";
 import { getCurseForgeDownloads } from "@/lib/curseforge";
+import { getKnownCurseForgeProject } from "@/lib/curseforge-data";
 import { renderBadge, errorBadge, BadgeStyle, BadgeTheme } from "@/lib/svg";
+import { renderCard } from "@/lib/card";
 import { formatCount } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -31,9 +33,11 @@ export async function GET(req: NextRequest) {
     return svgResponse(errorBadge("missing ?modrinth= / ?curseforge=", style, theme), 60);
   }
 
+  const known = cfSlug ? getKnownCurseForgeProject(cfSlug, category) : null;
+
   const results = await Promise.allSettled([
     modrinth ? getModrinthDownloads(modrinth) : Promise.resolve(0),
-    cfSlug || cfId ? getCurseForgeDownloads({ slug: cfSlug, id: cfId, category }) : Promise.resolve(0),
+    known ? Promise.resolve(known.downloads) : cfSlug || cfId ? getCurseForgeDownloads({ slug: cfSlug, id: cfId, category }) : Promise.resolve(0),
   ]);
 
   const values = results.map((r) => (r.status === "fulfilled" ? r.value : null));
@@ -42,12 +46,15 @@ export async function GET(req: NextRequest) {
   }
 
   const total = values.reduce((sum: number, v) => sum + (v ?? 0), 0);
-  const svg = renderBadge({
-    label,
-    value: `${formatCount(total)} downloads`,
-    color: color ? `#${color.replace(/^#/, "")}` : "#4c9fe8",
-    style,
-    theme,
-  });
+  const svg =
+    style === "card"
+      ? renderCard({ label, count: total, colorFrom: "#5ec8ff", colorTo: "#3b6fd8" })
+      : renderBadge({
+          label,
+          value: `${formatCount(total)} downloads`,
+          color: color ? `#${color.replace(/^#/, "")}` : "#4c9fe8",
+          style,
+          theme,
+        });
   return svgResponse(svg, 3600);
 }

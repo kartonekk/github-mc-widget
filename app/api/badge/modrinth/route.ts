@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
 import { getModrinthDownloads } from "@/lib/modrinth";
 import { renderBadge, errorBadge, BadgeStyle, BadgeTheme } from "@/lib/svg";
+import { renderCard } from "@/lib/card";
 import { formatCount } from "@/lib/format";
-import { MODRINTH_ICON_PATH, MODRINTH_COLOR } from "@/lib/icons";
+import { MODRINTH_ICON_PATH, MODRINTH_COLOR, MODRINTH_GRADIENT } from "@/lib/icons";
 import { NotFoundError } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -32,14 +33,24 @@ export async function GET(req: NextRequest) {
 
   try {
     const downloads = await getModrinthDownloads(project);
-    const svg = renderBadge({
-      label,
-      value: `${formatCount(downloads)} downloads`,
-      color: color ? `#${color.replace(/^#/, "")}` : MODRINTH_COLOR,
-      style,
-      theme,
-      iconPath: noLogo ? undefined : MODRINTH_ICON_PATH,
-    });
+    const svg =
+      style === "card"
+        ? renderCard({
+            label,
+            count: downloads,
+            colorFrom: MODRINTH_GRADIENT.from,
+            colorTo: MODRINTH_GRADIENT.to,
+            iconPath: noLogo ? undefined : MODRINTH_ICON_PATH,
+            iconColor: MODRINTH_GRADIENT.to,
+          })
+        : renderBadge({
+            label,
+            value: `${formatCount(downloads)} downloads`,
+            color: color ? `#${color.replace(/^#/, "")}` : MODRINTH_COLOR,
+            style,
+            theme,
+            iconPath: noLogo ? undefined : MODRINTH_ICON_PATH,
+          });
     return svgResponse(svg, 3600);
   } catch (err) {
     const message = err instanceof NotFoundError ? "not found" : "unavailable";
