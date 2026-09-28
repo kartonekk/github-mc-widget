@@ -2,25 +2,25 @@
   "mc-mods/head-locator": {
     "slug": "head-locator",
     "category": "mc-mods",
-    "downloads": 6408,
-    "updatedAt": "2026-09-28T13:49:26.310Z"
+    "downloads": 6481,
+    "updatedAt": "2026-09-28T23:15:00.919Z"
   },
   "mc-mods/tiny-players": {
     "slug": "tiny-players",
     "category": "mc-mods",
-    "downloads": 521,
-    "updatedAt": "2026-09-28T13:49:26.726Z"
+    "downloads": 525,
+    "updatedAt": "2026-09-28T23:15:01.616Z"
   },
   "mc-mods/spoty-widget": {
     "slug": "spoty-widget",
     "category": "mc-mods",
-    "downloads": 1012,
-    "updatedAt": "2026-09-28T13:49:27.098Z"
+    "downloads": 1032,
+    "updatedAt": "2026-09-28T23:15:03.653Z"
   },
   "texture-packs/hmi-tiny-items": {
     "slug": "hmi-tiny-items",
     "category": "texture-packs",
-    "downloads": 2782,
-    "updatedAt": "2026-09-28T13:49:27.500Z"
+    "downloads": 2796,
+    "updatedAt": "2026-09-28T23:15:04.773Z"
   }
 }
