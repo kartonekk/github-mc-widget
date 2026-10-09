@@ -51,7 +51,7 @@ ${decor}
 <svg x="${PAD + 8}" y="${midY - 11}" width="22" height="22" viewBox="0 0 24 24"><path fill="#c9d1d9" d="${GITHUB_ICON_PATH}"/></svg>
 <text x="${PAD + 48}" y="${nameY}" dominant-baseline="central" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="18" font-weight="700" fill="#c9d1d9">${esc(truncate(opts.login, 30))}</text>
 ${subtitleSvg}
-<text x="${W - PAD}" y="${midY - 11}" dominant-baseline="central" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="${numberFontSize}" font-weight="800" fill="#c5ff4a">${esc(value)}</text>
-<text x="${W - PAD}" y="${midY + 11}" dominant-baseline="central" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12" fill="#7d8590">${value === "1" ? "repository" : "repositories"}</text>
+<text x="${W - PAD}" y="${midY - 14}" dominant-baseline="central" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="${numberFontSize}" font-weight="800" fill="#c5ff4a">${esc(value)}</text>
+<text x="${W - PAD}" y="${midY + 22}" dominant-baseline="central" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="12" fill="#7d8590">${value === "1" ? "repository" : "repositories"}</text>
 </svg>`;
 }

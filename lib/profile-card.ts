@@ -21,8 +21,32 @@ const W = 420;
 const H = 240;
 const PAD = 24;
 
-function truncate(s: string, max: number): string {
-  return s.length > max ? s.slice(0, max - 1).trimEnd() + "…" : s;
+const ROW_X = 210;
+const GAP = 8;
+// Verdana advance widths for ASCII 32–126, in hundredths of an em (measured).
+// Characters outside that range fall back to a wide default.
+const BOLD_CHAR = [34,40,59,87,71,127,86,33,54,54,71,87,36,48,36,69,71,71,71,71,71,71,71,71,71,71,40,40,87,87,87,62,96,78,76,72,83,68,65,81,84,55,56,77,64,95,85,85,73,85,78,71,68,81,76,113,76,74,69,54,69,54,87,71,71,67,70,59,70,66,42,70,71,34,40,67,34,106,71,69,70,70,50,59,46,71,65,98,67,65,60,71,54,71,87];
+const REG_CHAR = [35,39,46,82,64,108,73,27,45,45,64,82,36,45,36,45,64,64,64,64,64,64,64,64,64,64,45,45,82,82,82,55,100,68,69,70,77,63,57,78,75,42,45,69,56,84,75,79,60,79,70,68,62,73,68,99,69,62,69,45,45,45,82,64,64,60,62,52,62,60,35,62,63,27,34,59,27,97,63,61,62,62,43,52,39,63,59,82,59,59,53,63,45,63,82];
+const ELLIPSIS_EM = 1;
+
+function estWidth(s: string, fontSize: number, widths: number[]): number {
+  let em = 0;
+  for (const ch of s) {
+    const code = ch.charCodeAt(0);
+    em += (code >= 32 && code < 127 ? widths[code - 32] : 90) / 100;
+  }
+  return em * fontSize;
+}
+
+// Shrink through the given font sizes until the text fits, then truncate at the smallest.
+function fitText(s: string, maxWidth: number, sizes: number[], widths: number[]): { text: string; size: number } {
+  for (const size of sizes) {
+    if (estWidth(s, size, widths) <= maxWidth) return { text: s, size };
+  }
+  const size = sizes[sizes.length - 1];
+  const chars = [...s];
+  while (chars.length > 1 && estWidth(chars.join(""), size, widths) + ELLIPSIS_EM * size > maxWidth) chars.pop();
+  return { text: chars.join("").trimEnd() + "…", size };
 }
 
 export function renderProfileCard(opts: ProfileCardOptions): string {
@@ -48,8 +72,13 @@ export function renderProfileCard(opts: ProfileCardOptions): string {
       const subtitleY = centerY + 12;
       const valueY = centerY - 4;
       const unitY2 = centerY + 13;
-      return `<text x="210" y="${titleY}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="13" font-weight="700" fill="#c9d1d9">${esc(truncate(row.title, 22))}</text>
-<text x="210" y="${subtitleY}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10" fill="#7d8590">${esc(truncate(row.subtitle, 26))}</text>
+      // Keep the left text clear of the right-aligned value/unit column.
+      const valueLeft = W - PAD - estWidth(row.value, 19, BOLD_CHAR);
+      const unitLeft = W - PAD - estWidth(row.unit, 10, REG_CHAR);
+      const title = fitText(row.title, valueLeft - GAP - ROW_X, [13, 12, 11], BOLD_CHAR);
+      const subtitle = fitText(row.subtitle, unitLeft - GAP - ROW_X, [10, 9], REG_CHAR);
+      return `<text x="${ROW_X}" y="${titleY}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="${title.size}" font-weight="700" fill="#c9d1d9">${esc(title.text)}</text>
+<text x="${ROW_X}" y="${subtitleY}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="${subtitle.size}" fill="#7d8590">${esc(subtitle.text)}</text>
 <text x="${W - PAD}" y="${valueY}" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="19" font-weight="800" fill="${row.color}">${esc(row.value)}</text>
 <text x="${W - PAD}" y="${unitY2}" text-anchor="end" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10" fill="${row.color}" fill-opacity="0.8">${esc(row.unit)}</text>`;
     })
