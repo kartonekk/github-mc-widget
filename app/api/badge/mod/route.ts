@@ -30,7 +30,7 @@ export async function GET(req: Request) {
 
     const art = modArtSources(project);
     const [bannerDataUri, iconDataUri] = await Promise.all([
-      art.bannerUrl ? imageDataUri(art.bannerUrl, { width: BANNER_W * 2, height: BANNER_H * 2 }) : undefined,
+      art.bannerUrl ? imageDataUri(art.bannerUrl, { width: BANNER_W * 2, height: BANNER_H * 2, fit: art.bannerFit }) : undefined,
       art.iconUrl ? imageDataUri(art.iconUrl, { width: 104, height: 104, format: "png", pixelated: true }) : undefined,
     ]);
     // No screenshot to show: blow the icon up into a soft backdrop instead.

@@ -16,6 +16,8 @@ export interface ImageOptions {
   // "attention" crops to the most salient region — handy when a wide banner
   // has to fill a narrow slice. Defaults to centre.
   position?: "centre" | "attention";
+  // "contain" letterboxes onto the card background instead of cropping.
+  fit?: "cover" | "contain";
   dim?: number; // 0–1 brightness multiplier, for art drawn behind text
   blur?: number; // gaussian sigma, for turning an icon into a soft backdrop
 }
@@ -44,8 +46,10 @@ async function load(url: string, opts: ImageOptions): Promise<string | undefined
 
     const format = opts.format ?? "jpeg";
     let img = sharp(Buffer.from(await res.arrayBuffer())).resize(opts.width, opts.height, {
-      fit: "cover",
-      position: opts.position === "attention" ? sharp.strategy.attention : "centre",
+      fit: opts.fit ?? "cover",
+      background: "#0d1117",
+      // Contained art hugs the top so the letterbox lands in the card's bottom fade.
+      position: opts.position === "attention" ? sharp.strategy.attention : opts.fit === "contain" ? "north" : "centre",
       kernel: opts.pixelated ? "nearest" : "lanczos3",
     });
     if (opts.blur) img = img.blur(opts.blur);

@@ -13,10 +13,12 @@ export interface CurseForgeRef {
 
 // Where a mod's promotional art lives inside its GitHub repo (read from the
 // default branch via raw.githubusercontent.com). Paths are repo-relative.
+// Leave banner/icon out to take that image from Modrinth instead.
 export interface RepoArt {
   repo: string; // "owner/name"
   branch?: string; // defaults to "master"
   banner?: string; // wide promo art, used as the mod card's backdrop
+  bannerFit?: "cover" | "contain"; // contain for art much wider than 1600x560
   icon?: string; // square mod icon
 }
 
@@ -52,10 +54,23 @@ export const AUTHOR_CONFIG = {
         icon: "src/main/resources/assets/headtracker/icon.png",
       },
     },
-    { id: "tiny", title: "Tiny Players", modrinthSlug: "tiny", curseforge: { slug: "tiny-players", category: "mc-mods" } },
-    { id: "spoty-widget", title: "Spoty Widget", modrinthSlug: "spoty-widget", curseforge: { slug: "spoty-widget", category: "mc-mods" } },
+    {
+      id: "tiny",
+      title: "Tiny Players",
+      modrinthSlug: "tiny",
+      curseforge: { slug: "tiny-players", category: "mc-mods" },
+      art: { repo: "Kart-Modding/Tiny", branch: "main" }, // screenshot + icon from Modrinth
+    },
+    {
+      id: "spoty-widget",
+      title: "Spoty Widget",
+      tagline: "Your Spotify “now playing” in the HUD",
+      modrinthSlug: "spoty-widget",
+      curseforge: { slug: "spoty-widget", category: "mc-mods" },
+      art: { repo: "Kart-Modding/SpotifyMusicMod", branch: "main", banner: "docs/images/banner.png", bannerFit: "contain" }, // icon from Modrinth
+    },
     { id: "hmi-tiny-items", title: "[HMI] Tiny Items", modrinthSlug: "hmi-tiny-items", curseforge: { slug: "hmi-tiny-items", category: "texture-packs" } },
-    { id: "kck", title: "Kart's Chaotic Kit", modrinthSlug: "kck" }, // not published on CurseForge
+    { id: "kck", title: "Kart's Chaotic Kit", modrinthSlug: "kck" }, // gallery photo + icon from Modrinth; not on CurseForge
   ] as ProjectEntry[],
 };
 

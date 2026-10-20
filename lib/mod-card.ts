@@ -27,7 +27,7 @@ export function renderModCard(opts: ModCardOptions): string {
   const total = opts.modrinthDownloads + opts.curseforgeDownloads;
   const value = formatCard(total);
 
-  // Banner: the mod's promo art untouched, with a fade into the card at its bottom edge.
+  // Banner: the mod's promo art, masked so it fades into the card toward its bottom edge.
   const banner = opts.bannerDataUri
     ? `<image href="${opts.bannerDataUri}" width="${BANNER_W}" height="${BANNER_H}" preserveAspectRatio="xMidYMid slice"/>`
     : `${opts.backdropDataUri ? `<image href="${opts.backdropDataUri}" width="${BANNER_W}" height="${BANNER_H}" preserveAspectRatio="xMidYMid slice"/>` : `<rect width="${BANNER_W}" height="${BANNER_H}" fill="url(#mod-fallback)"/>`}
@@ -122,16 +122,17 @@ ${cfW ? `<rect x="${PAD + mrW + gap / 2}" y="${barY}" width="${cfW - gap / 2}" h
 <stop offset="1" stop-color="#161b22"/>
 </linearGradient>
 <linearGradient id="mod-fade" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0" stop-color="#121820" stop-opacity="0"/>
-<stop offset="1" stop-color="#121820" stop-opacity="0.95"/>
+<stop offset="0.45" stop-color="#ffffff"/>
+<stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
 </linearGradient>
+<mask id="mod-banner-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${BANNER_H}"><rect width="${W}" height="${BANNER_H}" fill="url(#mod-fade)"/></mask>
 <clipPath id="mod-clip"><rect width="${W}" height="${H}" rx="20"/></clipPath>
 </defs>
 <g clip-path="url(#mod-clip)">
 <rect width="${W}" height="${H}" fill="url(#mod-bg)"/>
+<g mask="url(#mod-banner-mask)">
 ${banner}
-<rect y="${BANNER_H - 36}" width="${W}" height="36" fill="url(#mod-fade)"/>
-<rect y="${BANNER_H}" width="${W}" height="1" fill="${opts.accent}" fill-opacity="0.5"/>
+</g>
 <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="19.5" fill="none" stroke="#3d444d"/>
 </g>
 ${icon}

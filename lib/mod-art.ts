@@ -4,6 +4,7 @@ import type { ProjectStat } from "./stats";
 
 export interface ModArtSources {
   bannerUrl?: string;
+  bannerFit: "cover" | "contain";
   iconUrl?: string;
   accent: string;
 }
@@ -14,6 +15,7 @@ export function modArtSources(p: ProjectStat): ModArtSources {
   const art = p.entry.art;
   return {
     bannerUrl: art?.banner ? repoFileUrl(art, art.banner) : p.modrinth?.featuredImageUrl,
+    bannerFit: art?.banner ? art.bannerFit ?? "cover" : "cover",
     iconUrl: art?.icon ? repoFileUrl(art, art.icon) : p.modrinth?.iconUrl,
     accent: readableAccent(p.entry.accent ?? p.modrinth?.color ?? AUTHOR_CONFIG.accent),
   };
