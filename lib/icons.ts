@@ -15,12 +15,3 @@ export const CURSEFORGE_COLOR = "#f16436";
 
 export const MODRINTH_GRADIENT = { from: "#22e070", to: "#0b7a41" };
 export const CURSEFORGE_GRADIENT = { from: "#ff8a50", to: "#c93f1e" };
-
-// Loader dot colors, matching the shields on the mod READMEs.
-export const LOADER_COLORS: Record<string, string> = {
-  fabric: "#dbb585",
-  quilt: "#9b59ff",
-  neoforge: "#f48a3c",
-  forge: "#5b8cff",
-  minecraft: "#62e021",
-};

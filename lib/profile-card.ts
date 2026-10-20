@@ -10,7 +10,6 @@ export interface ProfileCardOptions {
   totalDownloads: number;
   modrinthDownloads: number;
   curseforgeDownloads: number;
-  footnote: string; // right side of the footer, e.g. "5 projects · 600 days"
   seed: string;
 }
 
@@ -51,7 +50,7 @@ export function renderProfileCard(opts: ProfileCardOptions): string {
     cfW >= 1 ? `<rect x="${(PAD + mrW + gap / 2).toFixed(1)}" y="${shareY}" width="${(cfW - gap / 2).toFixed(1)}" height="10" fill="${CURSEFORGE_COLOR}"/>` : "",
   ].join("\n");
 
-  // Footer: per-platform totals and a footnote.
+  // Footer: per-platform totals.
   const fy = footerY + 22;
   const chip = (x: number, path: string, color: string, n: number, label: string) => {
     const num = formatCard(n);
@@ -96,6 +95,5 @@ ${shares}
 </g>
 ${mr.svg}
 ${cf.svg}
-<text x="${W - PAD}" y="${fy}" text-anchor="end" font-family="${FONT}" font-size="12" fill="#7d8590">${esc(opts.footnote)}</text>
 </svg>`;
 }

@@ -45,9 +45,9 @@ totals. No query params; entirely driven by
 
 ### `GET /api/badge/mod?id=<id>`
 
-Card (420×280) for one mod from `lib/projects.config.ts`: its promo banner
-across the top, icon, title/tagline, total downloads in the mod's accent, a
-Modrinth/CurseForge split bar, supported Minecraft versions, and loaders.
+Card (420×217) for one mod from `lib/projects.config.ts`: its promo banner
+across the top, then icon, title/tagline, and total downloads in the mod's
+accent — deliberately sparse so a row of them stays easy to scan.
 
 Art comes from the mod's own repo when the entry has `art` (e.g.
 `Promotional Images/Infographics/banner.png` in `Kart-Modding/HeadTracker`,

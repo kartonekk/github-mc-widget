@@ -2,7 +2,6 @@ import { getAuthorStats } from "@/lib/stats";
 import { BANNER_H, BANNER_W, renderModCard } from "@/lib/mod-card";
 import { modArtSources } from "@/lib/mod-art";
 import { imageDataUri } from "@/lib/images";
-import { versionRange } from "@/lib/modrinth";
 import { errorBadge } from "@/lib/svg";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +17,7 @@ function svgResponse(body: string, cacheSeconds: number) {
 }
 
 // GET /api/badge/mod?id=<id> — one mod from lib/projects.config.ts, drawn
-// over its own promo art with its Modrinth/CurseForge download split.
+// over its own promo art with its total downloads.
 export async function GET(req: Request) {
   const id = new URL(req.url).searchParams.get("id");
   if (!id) return svgResponse(errorBadge("missing ?id="), 60);
@@ -49,8 +48,6 @@ export async function GET(req: Request) {
       bannerDataUri,
       backdropDataUri,
       iconDataUri,
-      loaders: project.modrinth?.loaders ?? [],
-      versions: versionRange(project.modrinth?.gameVersions ?? []),
     });
     return svgResponse(svg, 3600);
   } catch {

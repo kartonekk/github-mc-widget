@@ -20,10 +20,6 @@ function formatMonth(iso: string): string {
   return new Date(iso).toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 }
 
-function daysSince(iso: string): number {
-  return Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
-}
-
 // Profile card: total downloads with the Modrinth/CurseForge split, all
 // config-driven (see lib/projects.config.ts) — no query params required.
 export async function GET() {
@@ -44,7 +40,6 @@ export async function GET() {
       totalDownloads: stats.totalDownloads,
       modrinthDownloads: stats.modrinthDownloads,
       curseforgeDownloads: stats.curseforgeDownloads,
-      footnote: `${stats.projectCount} projects · ${daysSince(stats.memberSince)} days`,
       seed: AUTHOR_CONFIG.modrinthUser,
     });
 

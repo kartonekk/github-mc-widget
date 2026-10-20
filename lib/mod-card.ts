@@ -1,6 +1,5 @@
 import { BOLD_CHAR, FONT, REG_CHAR, esc, estWidth, fitText, formatCard } from "./card";
 import { cornerSquares, renderCornerSquares } from "./decor";
-import { CURSEFORGE_COLOR, CURSEFORGE_ICON_PATH, LOADER_COLORS, MODRINTH_COLOR, MODRINTH_ICON_PATH } from "./icons";
 
 export interface ModCardOptions {
   id: string;
@@ -12,12 +11,10 @@ export interface ModCardOptions {
   bannerDataUri?: string; // BANNER_W x BANNER_H (cover-cropped)
   backdropDataUri?: string; // used without a banner: blurred icon behind the title
   iconDataUri?: string;
-  loaders: string[];
-  versions?: string; // e.g. "1.21.6 → 26.3"
 }
 
 const W = 420;
-const H = 280;
+const H = 217;
 const PAD = 20;
 export const BANNER_W = W;
 export const BANNER_H = 147; // 1600x560 promo banners fit exactly
@@ -56,60 +53,6 @@ ${renderCornerSquares(cornerSquares(opts.id, W, BANNER_H), opts.accent)}
   const title = fitText(opts.title, numLeft - 12 - textX, [17, 15, 13], BOLD_CHAR);
   const tagline = opts.tagline ? fitText(opts.tagline, numLeft - 12 - textX, [11, 10], REG_CHAR) : undefined;
 
-  // Platform split bar.
-  const barY = BANNER_H + 64;
-  const barW = W - 2 * PAD;
-  const mrW = total ? Math.round((opts.modrinthDownloads / total) * barW) : 0;
-  const cfW = total ? barW - mrW : 0;
-  const gap = mrW && cfW ? 2 : 0;
-  const bar = total
-    ? `<clipPath id="mod-bar-clip"><rect x="${PAD}" y="${barY}" width="${barW}" height="6" rx="3"/></clipPath>
-<g clip-path="url(#mod-bar-clip)">
-${mrW ? `<rect x="${PAD}" y="${barY}" width="${mrW - gap / 2}" height="6" fill="${MODRINTH_COLOR}"/>` : ""}
-${cfW ? `<rect x="${PAD + mrW + gap / 2}" y="${barY}" width="${cfW - gap / 2}" height="6" fill="${CURSEFORGE_COLOR}"/>` : ""}
-</g>`
-    : `<rect x="${PAD}" y="${barY}" width="${barW}" height="6" rx="3" fill="#ffffff" fill-opacity="0.08"/>`;
-
-  const legendY = barY + 24;
-  const legendItem = (x: number, path: string, color: string, n: number, label: string) => {
-    const num = formatCard(n);
-    const numW = estWidth(num, 11, BOLD_CHAR);
-    return {
-      svg: `<svg x="${x}" y="${legendY - 10}" width="12" height="12" viewBox="0 0 24 24"><path fill="${color}" d="${path}"/></svg>
-<text x="${x + 17}" y="${legendY}" font-family="${FONT}" font-size="11" font-weight="700" fill="#e6edf3">${num}</text>
-<text x="${x + 21 + numW}" y="${legendY}" font-family="${FONT}" font-size="10" fill="#7d8590">${label}</text>`,
-      width: 21 + numW + estWidth(label, 10, REG_CHAR),
-    };
-  };
-  const legend: string[] = [];
-  let lx = PAD;
-  for (const [n, path, color, label] of [
-    [opts.modrinthDownloads, MODRINTH_ICON_PATH, MODRINTH_COLOR, "Modrinth"],
-    [opts.curseforgeDownloads, CURSEFORGE_ICON_PATH, CURSEFORGE_COLOR, "CurseForge"],
-  ] as const) {
-    if (!n) continue;
-    const item = legendItem(lx, path, color, n, label);
-    legend.push(item.svg);
-    lx += item.width + 16;
-  }
-  const versions = opts.versions
-    ? `<text x="${W - PAD}" y="${legendY}" text-anchor="end" font-family="${FONT}" font-size="10" fill="#7d8590">MC ${esc(opts.versions)}</text>`
-    : "";
-
-  // Loader pills, same dot colors as the README shields.
-  const pillY = legendY + 12;
-  let px = PAD;
-  const pills: string[] = [];
-  for (const loader of opts.loaders) {
-    const label = loader === "neoforge" ? "NeoForge" : loader.charAt(0).toUpperCase() + loader.slice(1);
-    const w = 22 + estWidth(label, 10, REG_CHAR);
-    if (px + w > W - PAD) break;
-    pills.push(`<rect x="${px}" y="${pillY}" width="${w}" height="18" rx="9" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.1"/>
-<circle cx="${px + 10}" cy="${pillY + 9}" r="3" fill="${LOADER_COLORS[loader] ?? "#8b949e"}"/>
-<text x="${px + 17}" y="${pillY + 13}" font-family="${FONT}" font-size="10" fill="#c9d1d9">${esc(label)}</text>`);
-    px += w + 6;
-  }
-
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opts.title)}: ${value} downloads">
 <title>${esc(opts.title)}: ${value} downloads</title>
 <defs>
@@ -140,9 +83,5 @@ ${icon}
 ${tagline ? `<text x="${textX}" y="${BANNER_H + 40}" font-family="${FONT}" font-size="${tagline.size}" fill="#7d8590">${esc(tagline.text)}</text>` : ""}
 <text x="${W - PAD}" y="${numY}" text-anchor="end" font-family="${FONT}" font-size="${numSize}" font-weight="800" fill="${opts.accent}">${esc(value)}</text>
 <text x="${W - PAD}" y="${numY + 15}" text-anchor="end" font-family="${FONT}" font-size="10" fill="#7d8590">downloads</text>
-${bar}
-${legend.join("\n")}
-${versions}
-${pills.join("\n")}
 </svg>`;
 }

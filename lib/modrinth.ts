@@ -9,8 +9,6 @@ export interface ModrinthProjectSummary {
   featuredImageUrl?: string; // featured gallery image, else the first one
   color?: string; // hex, Modrinth's color sampled from the icon
   sourceUrl?: string;
-  loaders: string[];
-  gameVersions: string[];
 }
 
 interface ModrinthApiProject {
@@ -20,8 +18,6 @@ interface ModrinthApiProject {
   icon_url?: string | null;
   color?: number | null;
   source_url?: string | null;
-  loaders?: string[];
-  game_versions?: string[];
   gallery?: { url: string; featured: boolean; ordering?: number }[];
 }
 
@@ -47,8 +43,6 @@ export async function getModrinthUserProjectsMap(
       featuredImageUrl: (gallery.find((g) => g.featured) ?? gallery[0])?.url,
       color: typeof p.color === "number" ? "#" + p.color.toString(16).padStart(6, "0") : undefined,
       sourceUrl: p.source_url ?? undefined,
-      loaders: p.loaders ?? [],
-      gameVersions: p.game_versions ?? [],
     };
   }
   return map;
@@ -64,18 +58,4 @@ export async function getModrinthUserCreated(username: string): Promise<string> 
 
   const data = await res.json();
   return data.created as string;
-}
-
-// "1.21.6 → 26.3" from a project's supported versions, ignoring snapshots.
-export function versionRange(versions: string[]): string | undefined {
-  const releases = versions.filter((v) => /^\d+\.\d+(\.\d+)?$/.test(v));
-  if (!releases.length) return undefined;
-  const key = (v: string) => v.split(".").map(Number);
-  releases.sort((a, b) => {
-    const [x, y] = [key(a), key(b)];
-    for (let i = 0; i < 3; i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) - (y[i] ?? 0);
-    return 0;
-  });
-  const [lo, hi] = [releases[0], releases[releases.length - 1]];
-  return lo === hi ? lo : `${lo} → ${hi}`;
 }
