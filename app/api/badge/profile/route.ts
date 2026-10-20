@@ -34,7 +34,7 @@ export async function GET() {
 
     const svg = renderProfileCard({
       name: AUTHOR_CONFIG.displayName,
-      subtitle: `Minecraft mods · since ${formatMonth(stats.memberSince)}`,
+      subtitle: `since ${formatMonth(stats.memberSince)}`,
       accent: AUTHOR_CONFIG.accent,
       avatarDataUri,
       totalDownloads: stats.totalDownloads,
