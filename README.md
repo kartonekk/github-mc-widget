@@ -38,7 +38,7 @@ Open http://localhost:3000 for a live preview.
 
 ### `GET /api/badge/profile`
 
-Card (420×150, dark gradient): your GitHub avatar and name, total downloads,
+Card (840×176 — spans a README at ~1:1, dark gradient): your GitHub avatar and name, total downloads,
 a bar splitting it between Modrinth and CurseForge, and both platform
 totals. No query params; entirely driven by
 `lib/projects.config.ts` (`displayName`, `githubUser`, `accent`, `projects`).
