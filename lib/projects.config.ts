@@ -32,6 +32,9 @@ export interface ProjectEntry {
   // Without it, art comes from Modrinth: the featured gallery screenshot as the
   // banner and the Modrinth icon (no screenshot → blurred icon as the backdrop).
   art?: RepoArt;
+  // Direct image URLs (e.g. a specific Modrinth gallery image); these win over art and Modrinth.
+  bannerUrl?: string;
+  iconUrl?: string;
 }
 
 export const AUTHOR_CONFIG = {
@@ -70,7 +73,13 @@ export const AUTHOR_CONFIG = {
       art: { repo: "Kart-Modding/SpotifyMusicMod", branch: "main", banner: "docs/images/banner.png", bannerFit: "contain" }, // icon from Modrinth
     },
     { id: "hmi-tiny-items", title: "[HMI] Tiny Items", modrinthSlug: "hmi-tiny-items", curseforge: { slug: "hmi-tiny-items", category: "texture-packs" } },
-    { id: "kck", title: "Kart's Chaotic Kit", modrinthSlug: "kck" }, // gallery photo + icon from Modrinth; not on CurseForge
+    {
+      id: "kck",
+      title: "Kart's Chaotic Kit",
+      modrinthSlug: "kck", // not published on CurseForge
+      bannerUrl: "https://cdn.modrinth.com/data/Fp1xKkvp/images/9ca1fb4edf3e1016a88978a6c6a90aaa5bfe432f.png",
+      iconUrl: "https://cdn.modrinth.com/data/Fp1xKkvp/1df58c7290e5e63926fee829fb097f62202f06fd_96.webp",
+    },
   ] as ProjectEntry[],
 };
 

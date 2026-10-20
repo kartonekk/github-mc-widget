@@ -53,7 +53,8 @@ Art comes from the mod's own repo when the entry has `art` (e.g.
 `Promotional Images/Infographics/banner.png` in `Kart-Modding/HeadTracker`,
 read from raw.githubusercontent.com); otherwise from Modrinth: the featured
 gallery screenshot (else the first one) and the Modrinth icon. A mod with no
-screenshots gets its icon blurred into the backdrop instead. 1600×560 banners fit the card exactly. The accent is
+screenshots gets its icon blurred into the backdrop instead. To pin specific images (e.g. one Modrinth gallery photo), set
+`bannerUrl` / `iconUrl` on the entry; they win over everything else. 1600×560 banners fit the card exactly. The accent is
 the entry's `accent`, else Modrinth's project color.
 
 ### `GET /api/badge/org?login=<org>`

@@ -9,14 +9,14 @@ export interface ModArtSources {
   accent: string;
 }
 
-// Promo art from the mod's own repo when configured, else Modrinth's
-// featured gallery screenshot and icon.
+// Direct image URLs from the config first, then promo art from the mod's own
+// repo, else Modrinth's featured gallery screenshot and icon.
 export function modArtSources(p: ProjectStat): ModArtSources {
   const art = p.entry.art;
   return {
-    bannerUrl: art?.banner ? repoFileUrl(art, art.banner) : p.modrinth?.featuredImageUrl,
-    bannerFit: art?.banner ? art.bannerFit ?? "cover" : "cover",
-    iconUrl: art?.icon ? repoFileUrl(art, art.icon) : p.modrinth?.iconUrl,
+    bannerUrl: p.entry.bannerUrl ?? (art?.banner ? repoFileUrl(art, art.banner) : p.modrinth?.featuredImageUrl),
+    bannerFit: !p.entry.bannerUrl && art?.banner ? art.bannerFit ?? "cover" : "cover",
+    iconUrl: p.entry.iconUrl ?? (art?.icon ? repoFileUrl(art, art.icon) : p.modrinth?.iconUrl),
     accent: readableAccent(p.entry.accent ?? p.modrinth?.color ?? AUTHOR_CONFIG.accent),
   };
 }
