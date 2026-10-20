@@ -9,7 +9,7 @@ export interface ModArtSources {
 }
 
 // Promo art from the mod's own repo when configured, else Modrinth's
-// featured gallery image and icon.
+// featured gallery screenshot and icon.
 export function modArtSources(p: ProjectStat): ModArtSources {
   const art = p.entry.art;
   return {

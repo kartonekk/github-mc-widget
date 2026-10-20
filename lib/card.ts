@@ -39,9 +39,6 @@ export function fitText(s: string, maxWidth: number, sizes: number[], widths: nu
   return { text: chars.join("").trimEnd() + "…", size };
 }
 
-// Distinct colors for per-project series (share bar, row bars).
-export const SERIES = ["#c5ff4a", "#ffa657", "#58a6ff", "#f778ba", "#bc8cff", "#39d353"];
-
 // Lift an accent toward white until it reads on the dark card background.
 export function readableAccent(hex: string): string {
   const n = parseInt(hex.slice(1), 16);

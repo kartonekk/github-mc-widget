@@ -33,6 +33,11 @@ export async function GET(req: Request) {
       art.bannerUrl ? imageDataUri(art.bannerUrl, { width: BANNER_W * 2, height: BANNER_H * 2 }) : undefined,
       art.iconUrl ? imageDataUri(art.iconUrl, { width: 104, height: 104, format: "png", pixelated: true }) : undefined,
     ]);
+    // No screenshot to show: blow the icon up into a soft backdrop instead.
+    const backdropDataUri =
+      !bannerDataUri && art.iconUrl
+        ? await imageDataUri(art.iconUrl, { width: BANNER_W, height: BANNER_H, blur: 14, dim: 0.55 })
+        : undefined;
 
     const svg = renderModCard({
       id,
@@ -42,6 +47,7 @@ export async function GET(req: Request) {
       modrinthDownloads: project.modrinthDownloads,
       curseforgeDownloads: project.curseforgeDownloads,
       bannerDataUri,
+      backdropDataUri,
       iconDataUri,
       loaders: project.modrinth?.loaders ?? [],
       versions: versionRange(project.modrinth?.gameVersions ?? []),

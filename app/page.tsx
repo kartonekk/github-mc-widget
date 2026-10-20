@@ -29,7 +29,7 @@ export default function Home() {
       </p>
 
       <div className="panel">
-        <label>Profile card — total downloads with a per-mod breakdown</label>
+        <label>Profile card — total downloads, Modrinth/CurseForge split</label>
         <div className="preview">
           <img src={profileBadgeUrl} alt="Total Downloads" />
         </div>

@@ -10,6 +10,7 @@ export interface ModCardOptions {
   modrinthDownloads: number;
   curseforgeDownloads: number;
   bannerDataUri?: string; // BANNER_W x BANNER_H (cover-cropped)
+  backdropDataUri?: string; // used without a banner: blurred icon behind the title
   iconDataUri?: string;
   loaders: string[];
   versions?: string; // e.g. "1.21.6 → 26.3"
@@ -29,7 +30,7 @@ export function renderModCard(opts: ModCardOptions): string {
   // Banner: the mod's promo art untouched, with a fade into the card at its bottom edge.
   const banner = opts.bannerDataUri
     ? `<image href="${opts.bannerDataUri}" width="${BANNER_W}" height="${BANNER_H}" preserveAspectRatio="xMidYMid slice"/>`
-    : `<rect width="${BANNER_W}" height="${BANNER_H}" fill="url(#mod-fallback)"/>
+    : `${opts.backdropDataUri ? `<image href="${opts.backdropDataUri}" width="${BANNER_W}" height="${BANNER_H}" preserveAspectRatio="xMidYMid slice"/>` : `<rect width="${BANNER_W}" height="${BANNER_H}" fill="url(#mod-fallback)"/>`}
 ${renderCornerSquares(cornerSquares(opts.id, W, BANNER_H), opts.accent)}
 <text x="${W / 2}" y="${BANNER_H / 2 + 12}" text-anchor="middle" font-family="${FONT}" font-size="34" font-weight="800" fill="#ffffff" fill-opacity="0.9">${esc(fitText(opts.title, W - 2 * PAD, [34, 28, 22], BOLD_CHAR).text)}</text>`;
 

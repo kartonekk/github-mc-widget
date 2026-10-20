@@ -17,6 +17,7 @@ export interface ImageOptions {
   // has to fill a narrow slice. Defaults to centre.
   position?: "centre" | "attention";
   dim?: number; // 0–1 brightness multiplier, for art drawn behind text
+  blur?: number; // gaussian sigma, for turning an icon into a soft backdrop
 }
 
 // Warm serverless instances reuse fetched art across requests.
@@ -47,6 +48,7 @@ async function load(url: string, opts: ImageOptions): Promise<string | undefined
       position: opts.position === "attention" ? sharp.strategy.attention : "centre",
       kernel: opts.pixelated ? "nearest" : "lanczos3",
     });
+    if (opts.blur) img = img.blur(opts.blur);
     if (opts.dim !== undefined) img = img.modulate({ brightness: opts.dim });
     const out = format === "png" ? await img.png({ compressionLevel: 9 }).toBuffer() : await img.flatten({ background: "#0d1117" }).jpeg({ quality: 72, mozjpeg: true }).toBuffer();
     return `data:image/${format};base64,${out.toString("base64")}`;

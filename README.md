@@ -2,8 +2,8 @@
 
 Dynamically generated SVG cards for a GitHub profile README:
 
-- a profile card — total Modrinth + CurseForge downloads with a per-mod
-  breakdown (icons, share bar, per-platform totals)
+- a profile card — total Modrinth + CurseForge downloads with the
+  per-platform split
 - a card per mod, drawn over that mod's own promotional art
 - an organization card (one per org) with its own accent and showcase
 
@@ -38,9 +38,9 @@ Open http://localhost:3000 for a live preview.
 
 ### `GET /api/badge/profile`
 
-Card (420 wide, dark gradient): your GitHub avatar and name, total downloads,
-a share bar splitting the total across mods, the top 5 mods with icon and
-count, and Modrinth/CurseForge totals. No query params; entirely driven by
+Card (420×150, dark gradient): your GitHub avatar and name, total downloads,
+a bar splitting it between Modrinth and CurseForge, and both platform
+totals. No query params; entirely driven by
 `lib/projects.config.ts` (`displayName`, `githubUser`, `accent`, `projects`).
 
 ### `GET /api/badge/mod?id=<id>`
@@ -51,8 +51,9 @@ Modrinth/CurseForge split bar, supported Minecraft versions, and loaders.
 
 Art comes from the mod's own repo when the entry has `art` (e.g.
 `Promotional Images/Infographics/banner.png` in `Kart-Modding/HeadTracker`,
-read from raw.githubusercontent.com); otherwise from Modrinth's featured
-gallery image and icon. 1600×560 banners fit the card exactly. The accent is
+read from raw.githubusercontent.com); otherwise from Modrinth: the featured
+gallery screenshot (else the first one) and the Modrinth icon. A mod with no
+screenshots gets its icon blurred into the backdrop instead. 1600×560 banners fit the card exactly. The accent is
 the entry's `accent`, else Modrinth's project color.
 
 ### `GET /api/badge/org?login=<org>`

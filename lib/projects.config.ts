@@ -27,7 +27,9 @@ export interface ProjectEntry {
   accent?: string; // hex; falls back to the Modrinth project color, then the brand lime
   modrinthSlug?: string;
   curseforge?: CurseForgeRef;
-  art?: RepoArt; // without it, art falls back to Modrinth's featured gallery image + icon
+  // Without it, art comes from Modrinth: the featured gallery screenshot as the
+  // banner and the Modrinth icon (no screenshot → blurred icon as the backdrop).
+  art?: RepoArt;
 }
 
 export const AUTHOR_CONFIG = {
@@ -50,7 +52,7 @@ export const AUTHOR_CONFIG = {
         icon: "src/main/resources/assets/headtracker/icon.png",
       },
     },
-    { id: "tiny", title: "Tiny", modrinthSlug: "tiny", curseforge: { slug: "tiny-players", category: "mc-mods" } },
+    { id: "tiny", title: "Tiny Players", modrinthSlug: "tiny", curseforge: { slug: "tiny-players", category: "mc-mods" } },
     { id: "spoty-widget", title: "Spoty Widget", modrinthSlug: "spoty-widget", curseforge: { slug: "spoty-widget", category: "mc-mods" } },
     { id: "hmi-tiny-items", title: "[HMI] Tiny Items", modrinthSlug: "hmi-tiny-items", curseforge: { slug: "hmi-tiny-items", category: "texture-packs" } },
     { id: "kck", title: "Kart's Chaotic Kit", modrinthSlug: "kck" }, // not published on CurseForge
