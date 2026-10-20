@@ -11,20 +11,53 @@ export interface CurseForgeRef {
   category: string; // e.g. "mc-mods", "texture-packs", "modpacks"
 }
 
+// Where a mod's promotional art lives inside its GitHub repo (read from the
+// default branch via raw.githubusercontent.com). Paths are repo-relative.
+export interface RepoArt {
+  repo: string; // "owner/name"
+  branch?: string; // defaults to "master"
+  banner?: string; // wide promo art, used as the mod card's backdrop
+  icon?: string; // square mod icon
+}
+
 export interface ProjectEntry {
+  id: string; // used in /api/badge/mod?id=<id>
   title: string;
+  tagline?: string;
+  accent?: string; // hex; falls back to the Modrinth project color, then the brand lime
   modrinthSlug?: string;
   curseforge?: CurseForgeRef;
+  art?: RepoArt; // without it, art falls back to Modrinth's featured gallery image + icon
 }
 
 export const AUTHOR_CONFIG = {
   modrinthUser: "Kartonek",
+  displayName: "Kartonekk",
+  githubUser: "kartonekk",
+  accent: "#c5ff4a",
 
   projects: [
-    { title: "Head Locator", modrinthSlug: "headlocator", curseforge: { slug: "head-locator", category: "mc-mods" } },
-    { title: "Tiny", modrinthSlug: "tiny", curseforge: { slug: "tiny-players", category: "mc-mods" } },
-    { title: "Spoty Widget", modrinthSlug: "spoty-widget", curseforge: { slug: "spoty-widget", category: "mc-mods" } },
-    { title: "[HMI] Tiny Items", modrinthSlug: "hmi-tiny-items", curseforge: { slug: "hmi-tiny-items", category: "texture-packs" } },
-    { title: "Kart's Chaotic Kit", modrinthSlug: "kck" }, // not published on CurseForge
+    {
+      id: "head-locator",
+      title: "Head Locator",
+      tagline: "Real player heads on the locator bar",
+      accent: "#62e021",
+      modrinthSlug: "headlocator",
+      curseforge: { slug: "head-locator", category: "mc-mods" },
+      art: {
+        repo: "Kart-Modding/HeadTracker",
+        banner: "Promotional Images/Infographics/banner.png",
+        icon: "src/main/resources/assets/headtracker/icon.png",
+      },
+    },
+    { id: "tiny", title: "Tiny", modrinthSlug: "tiny", curseforge: { slug: "tiny-players", category: "mc-mods" } },
+    { id: "spoty-widget", title: "Spoty Widget", modrinthSlug: "spoty-widget", curseforge: { slug: "spoty-widget", category: "mc-mods" } },
+    { id: "hmi-tiny-items", title: "[HMI] Tiny Items", modrinthSlug: "hmi-tiny-items", curseforge: { slug: "hmi-tiny-items", category: "texture-packs" } },
+    { id: "kck", title: "Kart's Chaotic Kit", modrinthSlug: "kck" }, // not published on CurseForge
   ] as ProjectEntry[],
 };
+
+export function repoFileUrl(art: RepoArt, path: string): string {
+  const encoded = path.split("/").map(encodeURIComponent).join("/");
+  return `https://raw.githubusercontent.com/${art.repo}/${art.branch ?? "master"}/${encoded}`;
+}

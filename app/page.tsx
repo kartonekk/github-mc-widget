@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ORGS_CONFIG } from "@/lib/orgs.config";
+import { AUTHOR_CONFIG } from "@/lib/projects.config";
 
 export default function Home() {
   const [copied, setCopied] = useState<string | null>(null);
@@ -22,13 +23,13 @@ export default function Home() {
     <main>
       <h1>github-mc-widget</h1>
       <p className="subtitle">
-        Dashboard-style SVG cards for a GitHub profile README — total downloads/best
-        project/account age summed across your Modrinth and CurseForge projects, and a public
-        repo-count card per GitHub organization. Drop each one in separately.
+        SVG cards for a GitHub profile README — total downloads summed across your Modrinth
+        and CurseForge projects, a card per mod drawn over its own promo art, and a custom
+        card per GitHub organization. Drop each one in separately.
       </p>
 
       <div className="panel">
-        <label>Profile card — downloads, best project, account age</label>
+        <label>Profile card — total downloads with a per-mod breakdown</label>
         <div className="preview">
           <img src={profileBadgeUrl} alt="Total Downloads" />
         </div>
@@ -41,6 +42,28 @@ export default function Home() {
           {copied === "profile-html" ? "Copied!" : "Copy HTML"}
         </button>
       </div>
+
+      {AUTHOR_CONFIG.projects.map(({ id, title }) => {
+        const badgeUrl = `${origin}/api/badge/mod?id=${encodeURIComponent(id)}`;
+        const markdown = `![${title}](${badgeUrl})`;
+        const html = `<img src="${badgeUrl}" alt="${title}">`;
+        return (
+          <div className="panel" key={id}>
+            <label>Mod card — {title}</label>
+            <div className="preview">
+              <img src={badgeUrl} alt={title} />
+            </div>
+            <pre>{markdown}</pre>
+            <button onClick={() => copy(`${id}-md`, markdown)}>
+              {copied === `${id}-md` ? "Copied!" : "Copy Markdown"}
+            </button>
+            <pre>{html}</pre>
+            <button onClick={() => copy(`${id}-html`, html)}>
+              {copied === `${id}-html` ? "Copied!" : "Copy HTML"}
+            </button>
+          </div>
+        );
+      })}
 
       {ORGS_CONFIG.orgs.map(({ login }) => {
         const badgeUrl = `${origin}/api/badge/org?login=${encodeURIComponent(login)}`;
@@ -70,6 +93,7 @@ export default function Home() {
       <div className="panel">
         <label>API reference</label>
         <pre>{`GET /api/badge/profile         (config-driven, see lib/projects.config.ts — no query params)
+GET /api/badge/mod?id=<id>     (a mod id from lib/projects.config.ts)
 GET /api/badge/org?login=<org> (any public GitHub org login)`}</pre>
       </div>
     </main>

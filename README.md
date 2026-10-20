@@ -2,12 +2,14 @@
 
 Dynamically generated SVG cards for a GitHub profile README:
 
-- a profile card summarizing your Modrinth + CurseForge project stats —
-  total downloads, best-selling project, and account age
-- an organization card (one per org) showing its public repo count
+- a profile card — total Modrinth + CurseForge downloads with a per-mod
+  breakdown (icons, share bar, per-platform totals)
+- a card per mod, drawn over that mod's own promotional art
+- an organization card (one per org) with its own accent and showcase
 
 ```md
 ![Total Downloads](https://your-deployment.vercel.app/api/badge/profile)
+![Head Locator](https://your-deployment.vercel.app/api/badge/mod?id=head-locator)
 [![Kart-Modding](https://your-deployment.vercel.app/api/badge/org?login=Kart-Modding)](https://github.com/Kart-Modding)
 [![Kart-Forks](https://your-deployment.vercel.app/api/badge/org?login=Kart-Forks)](https://github.com/Kart-Forks)
 ```
@@ -36,19 +38,41 @@ Open http://localhost:3000 for a live preview.
 
 ### `GET /api/badge/profile`
 
-Dashboard-style card (420×240, dark gradient): total downloads front and
-center, plus a 3-row breakdown — best-selling project, project count, and
-account age since your Modrinth signup date. No query params; entirely
-driven by `lib/projects.config.ts`.
+Card (420 wide, dark gradient): your GitHub avatar and name, total downloads,
+a share bar splitting the total across mods, the top 5 mods with icon and
+count, and Modrinth/CurseForge totals. No query params; entirely driven by
+`lib/projects.config.ts` (`displayName`, `githubUser`, `accent`, `projects`).
+
+### `GET /api/badge/mod?id=<id>`
+
+Card (420×280) for one mod from `lib/projects.config.ts`: its promo banner
+across the top, icon, title/tagline, total downloads in the mod's accent, a
+Modrinth/CurseForge split bar, supported Minecraft versions, and loaders.
+
+Art comes from the mod's own repo when the entry has `art` (e.g.
+`Promotional Images/Infographics/banner.png` in `Kart-Modding/HeadTracker`,
+read from raw.githubusercontent.com); otherwise from Modrinth's featured
+gallery image and icon. 1600×560 banners fit the card exactly. The accent is
+the entry's `accent`, else Modrinth's project color.
 
 ### `GET /api/badge/org?login=<org>`
 
-Card (420×120, dark gradient) with one GitHub organization's public repo
-count. `login` is required and can be any public org — fetched live from
-the public GitHub API (`GET /orgs/{login}`), no token needed. A matching
-entry in `lib/orgs.config.ts` adds a subtitle under the org name. Add one
-`<img>`/markdown line per org you want to show, wrapped in a link to
-`https://github.com/<org>` so clicking it opens the organization.
+Card (420×150) with one GitHub organization's public repo count. `login` is
+required and can be any public org — fetched live from the public GitHub
+API, no token needed. A matching entry in `lib/orgs.config.ts` sets the
+subtitle, accent, and showcase:
+
+- `showcase: "mods"` — the promo art of the configured mods whose source is
+  in this org fills the right side, with their icons in a row
+- `showcase: "repos"` (default) — recently pushed repo names as chips over a
+  commit-graph motif
+
+Wrap each in a link to `https://github.com/<org>` so clicking it opens the
+organization.
+
+Images are fetched server-side, resized with `sharp` to the size they're
+drawn at, and inlined as data URIs (GitHub's image proxy blocks external
+images inside SVGs), so each card stays around 50KB.
 
 All badge responses are SVG (`image/svg+xml`) and are CDN-cached for one
 hour (`s-maxage=3600`) so a busy GitHub profile doesn't hammer the upstream
